@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistem Booking Lapangan USSC</title>
+
+<style>
+:root{
+  --primary:#004aad;
+  --dark:#003080;
+  --danger:#dc3545;
+  --success:#28a745;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Segoe UI",Arial,sans-serif;
+  background:
+    linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),
+    url("https://ik.imagekit.io/tvlk/blog/2024/07/shutterstock_1683387376.jpg")
+    center/cover no-repeat fixed;
+}
+.header{text-align:center;padding:80px 20px;color:white;background:linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6))}
+.navbar{display:flex;background:rgba(0,0,0,.85);padding:0 20px}
+.navbar a{color:white;padding:14px 18px;text-decoration:none;cursor:pointer}
+.navbar a:hover{background:var(--primary)}
+.navbar .right{margin-left:auto}
+main{max-width:1100px;margin:30px auto;padding:20px}
+.card{background:rgba(255,255,255,.95);padding:25px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.25);margin-bottom:25px}
+.hidden{display:none}
+label{font-weight:600;margin-top:15px;display:block}
+input,select{width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid #ccc}
+button{margin-top:15px;padding:12px;width:100%;background:var(--primary);color:white;border:none;border-radius:10px;cursor:pointer}
+button:hover{background:var(--dark)}
+.back-btn{background:#6c757d}
+.back-btn:hover{background:#495057}
+table{width:100%;border-collapse:collapse}
+th{background:var(--primary);color:white;padding:12px}
+td{text-align:center;padding:10px;border-bottom:1px solid #eee}
+.delete-btn{background:var(--danger);padding:6px;border-radius:6px;color:white}
+.lapangan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.lapangan-card{background:white;border-radius:14px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.2);cursor:pointer;transition:.3s}
+.lapangan-card:hover{transform:translateY(-5px)}
+.lapangan-card img{width:100%;height:170px;object-fit:cover}
+.lapangan-card h3{text-align:center;margin:15px}
+.alert{padding:15px;border-radius:10px;margin-bottom:15px}
+.alert-danger{background:#f8d7da;color:#842029;border-left:6px solid var(--danger)}
+.alert-success{background:#eafaf1;color:#155724;border-left:6px solid var(--success)}
+
+/* ===== TAMBAHAN DESAIN JADWAL PER LAPANGAN ===== */
+.jadwal-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+}
+.jadwal-card{
+  border-radius:14px;
+  padding:18px;
+  color:white;
+  box-shadow:0 8px 20px rgba(0,0,0,.25);
+}
+.jadwal-card h3{
+  text-align:center;
+  margin:6px 0 10px;
+}
+.jadwal-card table{
+  background:white;
+  color:black;
+  border-radius:10px;
+  overflow:hidden;
+}
+.jadwal-card th{background:#f1f1f1;color:black}
+.icon{text-align:center;font-size:28px;margin-bottom:5px}
+.lap-futsal{background:#28a745}
+.lap-basket{background:#ff9800}
+.lap-voli{background:#6f42c1}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <!-- LOGO UDINUS -->
+  <img src="https://dinus.ac.id/wp-content/uploads/2022/12/cropped-Logo-Udinus-Official-02-300x300-1.png" style="width:100px;"
+       alt="Logo UDINUS">
+  <h1>Udinus Satria Sport Center</h1>
+  <p>Sistem Booking Lapangan Online</p>
+</div>
+
+<div class="navbar">
+  <a onclick="showHome()">Home</a>
+  <a onclick="showPublicJadwal()">Lihat Jadwal</a>
+  <a onclick="showLogin()" class="right">Login</a>
+</div>
+
+<main>
+
+<div id="homePage" class="card">
+  <h2>Selamat Datang di Udinus Satria Sport Center</h2>
+  <p>Melalui sistem ini, pengguna dapat melihat jadwal lapangan serta melakukan booking lapangan olahraga dengan mudah.</p>
+ <p> .</p>
+ <p> .</p>
+ <p> .</p>
+ <p> .</p>
+ <p>MORE INPOOOOOOOOO !!</p>
+ <p>Alamat : Jl. Sana sini jalan ;                  Email : usscjaya@gmail.com    ;                No Telpon : 0123456789</p>
+ 
+</div>
+
+ 
+
+<div id="loginPage" class="card hidden">
+  <h2>Login</h2>
+  <label>Username / NIM</label>
+  <input id="username">
+  <label>Password</label>
+  <input type="password" id="password">
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="publicJadwal" class="card hidden">
+  <button class="back-btn" onclick="showHome()">⬅ Kembali</button>
+  <h2>Jadwal Lapangan</h2>
+  <div id="publicTable" class="jadwal-grid"></div>
+</div>
+
+<div id="bookingPage" class="card hidden">
+  <h2 id="roleTitle"></h2>
+  <button onclick="showLapangan()">📝 Booking Lapangan</button>
+  <button onclick="showJadwal()" id="adminBtn" class="hidden">📊 Kelola Jadwal</button>
+</div>
+
+<div id="lapanganPage" class="card hidden">
+  <button class="back-btn" onclick="showBooking()">⬅ Kembali</button>
+  <h2>Pilih Lapangan</h2>
+  <div class="lapangan-grid">
+    <div class="lapangan-card" onclick="pilihLapangan('Futsal')">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqn_q57frFJqSxJam5UCWu8V1sJl6qM1G4kg&s">
+      <h3>Futsal</h3>
+    </div>
+    <div class="lapangan-card" onclick="pilihLapangan('Basket')">
+      <img src="https://media.istockphoto.com/id/1408109500/id/foto/bola-basket-mencetak-poin-kemenangan-di-ring-net-basket-di-arena-basket.jpg?s=612x612&w=0&k=20&c=9QuZo0VdzztEnG0fcb9qil7If_xrqenXwC_03pAo-hw=">
+      <h3>Basket</h3>
+    </div>
+    <div class="lapangan-card" onclick="pilihLapangan('Voli')">
+      <img src="https://img.freepik.com/foto-gratis/close-up-pada-lingkungan-olahraga-dengan-bola-voli_23-2151891098.jpg?semt=ais_hybrid&w=740&q=80">
+      <h3>Voli</h3>
+    </div>
+  </div>
+</div>
+
+<div id="formSection" class="card hidden">
+  <button class="back-btn" onclick="showLapangan()">⬅ Kembali</button>
+  <h2>Form Booking</h2>
+  <div id="formAlert" class="alert alert-danger hidden"></div>
+  <label>Nama</label>
+  <input id="nama">
+  <label>Tanggal</label>
+  <input type="date" id="tanggal">
+  <label>Jam Mulai</label>
+  <input type="time" id="mulai">
+  <label>Durasi (jam)</label>
+  <select id="durasi"><option>1</option><option>2</option><option>3</option></select>
+  <button onclick="booking()">Booking</button>
+</div>
+
+<div id="jadwalSection" class="card hidden">
+  <button class="back-btn" onclick="showBooking()">⬅ Kembali</button>
+  <div id="buktiBooking" class="alert alert-success hidden"></div>
+  <h2>Jadwal Booking</h2>
+  <table>
+    <thead>
+      <tr><th>Nama</th><th>Lapangan</th><th>Tanggal</th><th>Jam</th><th>Aksi</th></tr>
+    </thead>
+    <tbody id="table"></tbody>
+  </table>
+</div>
+
+</main>
+
+<script>
+const admin={pass:"admin123"};
+const PASS_MHS="pinjamussc";
+let role="",data=JSON.parse(localStorage.getItem("bookings"))||[];
+let lapanganTerpilih="",lastBooking=null;
+
+function hideAll(){
+  homePage.classList.add("hidden");
+  loginPage.classList.add("hidden");
+  publicJadwal.classList.add("hidden");
+  bookingPage.classList.add("hidden");
+  lapanganPage.classList.add("hidden");
+  formSection.classList.add("hidden");
+  jadwalSection.classList.add("hidden");
+}
+function showHome(){hideAll();homePage.classList.remove("hidden")}
+function showLogin(){hideAll();loginPage.classList.remove("hidden")}
+function showBooking(){hideAll();bookingPage.classList.remove("hidden")}
+function showLapangan(){hideAll();lapanganPage.classList.remove("hidden")}
+
+function showPublicJadwal(){
+  hideAll();
+  publicJadwal.classList.remove("hidden");
+  publicTable.innerHTML="";
+
+  const map={
+    Futsal:{icon:"⚽",cls:"lap-futsal"},
+    Basket:{icon:"🏀",cls:"lap-basket"},
+    Voli:{icon:"🏐",cls:"lap-voli"}
+  };
+
+  Object.keys(map).forEach(lap=>{
+    let list=data.filter(b=>b.lap===lap);
+    if(!list.length) return;
+
+    let rows="";
+    list.forEach(b=>{
+      rows+=`<tr><td>${b.nama}</td><td>${b.tgl}</td><td>${b.jam}</td></tr>`;
+    });
+
+    publicTable.innerHTML+=`
+      <div class="jadwal-card ${map[lap].cls}">
+        <div class="icon">${map[lap].icon}</div>
+        <h3>${lap}</h3>
+        <table>
+          <tr><th>Nama</th><th>Tanggal</th><th>Jam</th></tr>
+          ${rows}
+        </table>
+      </div>`;
+  });
+}
+
+function login(){
+  if(username.value==="admin" && password.value===admin.pass){
+    role="admin";adminBtn.classList.remove("hidden");
+  }else if(password.value===PASS_MHS){
+    role="mahasiswa";adminBtn.classList.add("hidden");
+  }else return;
+  roleTitle.innerText=role==="admin"?"Dashboard Admin":"Menu Mahasiswa";
+  showBooking();
+}
+
+function pilihLapangan(l){
+  lapanganTerpilih=l;
+  formAlert.classList.add("hidden");
+  hideAll();formSection.classList.remove("hidden");
+}
+
+function isBentrok(tgl,lap,start,end){
+  return data.some(b=>{
+    if(b.tgl!==tgl||b.lap!==lap) return false;
+    let [s,e]=b.jam.split("-");
+    return start<parseInt(e)&&end>parseInt(s);
+  });
+}
+
+function booking(){
+  let start=parseInt(mulai.value.split(":")[0]);
+  let end=start+parseInt(durasi.value);
+  if(isBentrok(tanggal.value,lapanganTerpilih,start,end)){
+    formAlert.innerHTML="❌ Booking gagal, jadwal bentrok.";
+    formAlert.classList.remove("hidden");return;
+  }
+  lastBooking={nama:nama.value,lap:lapanganTerpilih,tgl:tanggal.value,jam:start+"-"+end+":00"};
+  data.push(lastBooking);
+  localStorage.setItem("bookings",JSON.stringify(data));
+  showJadwal();
+}
+
+function showJadwal(){
+  hideAll();jadwalSection.classList.remove("hidden");
+  table.innerHTML="";
+  data.forEach((b,i)=>{
+    let aksi = role==="admin"
+      ? `<button class="delete-btn" onclick="hapus(${i})">Hapus</button>`
+      : "-";
+    table.innerHTML+=`
+      <tr>
+        <td>${b.nama}</td>
+        <td>${b.lap}</td>
+        <td>${b.tgl}</td>
+        <td>${b.jam}</td>
+        <td>${aksi}</td>
+      </tr>`;
+  });
+  if(lastBooking){
+    buktiBooking.classList.remove("hidden");
+    buktiBooking.innerHTML=`✅ Booking berhasil<br>${lastBooking.lap} | ${lastBooking.tgl} | ${lastBooking.jam}`;
+    lastBooking=null;
+  }
+}
+
+function hapus(i){
+  data.splice(i,1);
+  localStorage.setItem("bookings",JSON.stringify(data));
+  showJadwal();
+}
+</script>
+
+</body>
+</html>
